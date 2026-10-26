@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gas Bottle Card – Demo</title>
+  <style>
+    :root {
+      --primary-background-color: #fafafa;
+      --secondary-background-color: #e8e8e8;
+      --card-background-color: #ffffff;
+      --primary-text-color: #212121;
+      --secondary-text-color: #727272;
+      --primary-color: #03a9f4;
+      --divider-color: #e0e0e0;
+    }
+    :root[data-theme="dark"] {
+      --primary-background-color: #111111;
+      --secondary-background-color: #2c2c2c;
+      --card-background-color: #1c1c1c;
+      --primary-text-color: #e1e1e1;
+      --secondary-text-color: #9b9b9b;
+      --divider-color: #333333;
+    }
+    body {
+      margin: 0;
+      padding: 24px 16px;
+      background: var(--primary-background-color);
+      color: var(--primary-text-color);
+      font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main { max-width: 760px; margin: 0 auto; }
+    h1 { font-size: 1.4em; font-weight: 500; }
+    .controls {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 10px 16px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .controls input[type="number"] { width: 6em; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+  </style>
+  <script>
+    // Minimal stand-in for Home Assistant's <ha-card>
+    customElements.define("ha-card", class extends HTMLElement {
+      connectedCallback() {
+        Object.assign(this.style, {
+          display: "block",
+          background: "var(--card-background-color)",
+          borderRadius: "12px",
+          border: "1px solid var(--divider-color)",
+        });
+      }
+    });
+  </script>
+  <script src="../dist/gas-bottle-card.js"></script>
+</head>
+<body>
+<main>
+  <h1>Gas Bottle Card – Demo</h1>
+  <div class="controls">
+    <label for="level">Füllstand</label>
+    <div><input id="level" type="range" min="0" max="100" value="72"> <output id="levelOut">72 %</output></div>
+    <label for="capacity">Gesamtvolumen (kg)</label>
+    <input id="capacity" type="number" min="0.1" step="0.1" value="11">
+    <label for="unavailable">Entität nicht verfügbar</label>
+    <input id="unavailable" type="checkbox">
+    <label for="dark">Dunkles Theme</label>
+    <input id="dark" type="checkbox">
+  </div>
+  <div class="cards">
+    <gas-bottle-card id="main"></gas-bottle-card>
+    <gas-bottle-card id="warn"></gas-bottle-card>
+    <gas-bottle-card id="crit"></gas-bottle-card>
+  </div>
+</main>
+<script>
+  const makeHass = (states) => ({
+    language: "de",
+    locale: { language: "de" },
+    states,
+  });
+  const entity = (id, name, state) => ({
+    entity_id: id,
+    state: String(state),
+    attributes: { friendly_name: name, unit_of_measurement: "%" },
+  });
+
+  const main = document.getElementById("main");
+  const warn = document.getElementById("warn");
+  const crit = document.getElementById("crit");
+  const level = document.getElementById("level");
+  const capacity = document.getElementById("capacity");
+  const unavailable = document.getElementById("unavailable");
+
+  warn.setConfig({ entity: "sensor.gas_camper", capacity: 5 });
+  crit.setConfig({ entity: "sensor.gas_heizung", name: "Heizung", capacity: 33 });
+
+  function configure() {
+    main.setConfig({ entity: "sensor.gasflasche", name: "Gasgrill", capacity: Number(capacity.value) || 11 });
+    update();
+  }
+
+  function update() {
+    document.getElementById("levelOut").textContent = `${level.value} %`;
+    const hass = makeHass({
+      "sensor.gasflasche": entity("sensor.gasflasche", "Gasflasche",
+        unavailable.checked ? "unavailable" : level.value),
+      "sensor.gas_camper": entity("sensor.gas_camper", "Camper", 24),
+      "sensor.gas_heizung": entity("sensor.gas_heizung", "Heizung", 9),
+    });
+    [main, warn, crit].forEach((c) => (c.hass = hass));
+  }
+
+  level.addEventListener("input", update);
+  capacity.addEventListener("input", configure);
+  unavailable.addEventListener("change", update);
+  document.getElementById("dark").addEventListener("change", (e) => {
+    document.documentElement.dataset.theme = e.target.checked ? "dark" : "light";
+  });
+  configure();
+</script>
+</body>
+</html>

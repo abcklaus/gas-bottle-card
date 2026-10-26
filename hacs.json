@@ -1,0 +1,6 @@
+{
+  "name": "Gas Bottle Card",
+  "filename": "gas-bottle-card.js",
+  "render_readme": true,
+  "homeassistant": "2024.8.0"
+}
