@@ -1,7 +1,7 @@
 # Gas Bottle Card
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
-[![Validate](https://github.com/<OWNER>/gas-bottle-card/actions/workflows/validate.yml/badge.svg)](https://github.com/<OWNER>/gas-bottle-card/actions/workflows/validate.yml)
+[![Validate](https://github.com/abcklaus/gas-bottle-card/actions/workflows/validate.yml/badge.svg)](https://github.com/abcklaus/gas-bottle-card/actions/workflows/validate.yml)
 
 Eine Lovelace-Card für Home Assistant, die den Füllstand einer Gasflasche grafisch darstellt.
 Die Entität liefert den Füllstand in Prozent – die Card berechnet daraus zusammen mit dem
@@ -28,7 +28,7 @@ eingestellten Gesamtvolumen die verbleibende Gasmenge in kg.
 
 1. In Home Assistant **HACS** öffnen.
 2. Oben rechts auf **⋮ → Benutzerdefinierte Repositories** klicken.
-3. Repository-URL `https://github.com/<OWNER>/gas-bottle-card` eintragen und als Typ
+3. Repository-URL `https://github.com/abcklaus/gas-bottle-card` eintragen und als Typ
    **Dashboard** auswählen.
 4. Nach **Gas Bottle Card** suchen und **Herunterladen** klicken.
 5. Browser neu laden (ggf. Cache leeren).

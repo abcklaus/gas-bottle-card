@@ -5,7 +5,7 @@
  * percent; the remaining amount in kg is computed from the configured
  * bottle capacity.
  *
- * https://github.com/<OWNER>/gas-bottle-card
+ * https://github.com/abcklaus/gas-bottle-card
  */
 (() => {
   const CARD_VERSION = "1.0.0";
@@ -462,7 +462,7 @@
       name: "Gas Bottle Card",
       description: t(document.querySelector("home-assistant")?.hass, "description"),
       preview: true,
-      documentationURL: "https://github.com/<OWNER>/gas-bottle-card",
+      documentationURL: "https://github.com/abcklaus/gas-bottle-card",
     });
   }
 
