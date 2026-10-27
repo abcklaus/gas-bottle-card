@@ -39,6 +39,7 @@
       margin-bottom: 24px;
     }
     .controls input[type="number"] { width: 6em; }
+    #main { grid-column: 1 / -1; }
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -85,10 +86,10 @@
     locale: { language: "de" },
     states,
   });
-  const entity = (id, name, state) => ({
+  const entity = (id, name, state, unit = "%") => ({
     entity_id: id,
     state: String(state),
-    attributes: { friendly_name: name, unit_of_measurement: "%" },
+    attributes: { friendly_name: name, unit_of_measurement: unit },
   });
 
   const main = document.getElementById("main");
@@ -98,11 +99,18 @@
   const capacity = document.getElementById("capacity");
   const unavailable = document.getElementById("unavailable");
 
-  warn.setConfig({ entity: "sensor.gas_camper", capacity: 5 });
-  crit.setConfig({ entity: "sensor.gas_heizung", name: "Heizung", capacity: 33 });
+  warn.setConfig({ entity: "sensor.gas_camper", capacity: 5, temperature_entity: "sensor.camper_temperatur" });
+  crit.setConfig({ entity: "sensor.gas_heizung", name: "Heizung", capacity: 33,
+    temperature_entity: "sensor.camper_temperatur", level_mm_entity: "sensor.heizung_fuellhoehe" });
 
   function configure() {
-    main.setConfig({ entity: "sensor.gasflasche", name: "Gasgrill", capacity: Number(capacity.value) || 11 });
+    main.setConfig({
+      entity: "sensor.gasflasche",
+      name: "Gasgrill",
+      capacity: Number(capacity.value) || 11,
+      temperature_entity: "sensor.gaskasten_temperatur",
+      level_mm_entity: "sensor.gasflasche_fuellhoehe",
+    });
     update();
   }
 
@@ -111,8 +119,13 @@
     const hass = makeHass({
       "sensor.gasflasche": entity("sensor.gasflasche", "Gasflasche",
         unavailable.checked ? "unavailable" : level.value),
+      "sensor.gaskasten_temperatur": entity("sensor.gaskasten_temperatur", "Gaskasten", "12.4", "°C"),
+      "sensor.gasflasche_fuellhoehe": entity("sensor.gasflasche_fuellhoehe", "Füllhöhe",
+        unavailable.checked ? "unavailable" : Math.round(level.value * 2.6), "mm"),
       "sensor.gas_camper": entity("sensor.gas_camper", "Camper", 24),
+      "sensor.camper_temperatur": entity("sensor.camper_temperatur", "Camper", "8.1", "°C"),
       "sensor.gas_heizung": entity("sensor.gas_heizung", "Heizung", 9),
+      "sensor.heizung_fuellhoehe": entity("sensor.heizung_fuellhoehe", "Heizung", 61, "mm"),
     });
     [main, warn, crit].forEach((c) => (c.hass = hass));
   }

@@ -18,7 +18,8 @@ eingestellten Gesamtvolumen die verbleibende Gasmenge in kg.
 - Farbwechsel grün → gelb → rot über einstellbare Schwellwerte
 - Neutrales Design, passt sich automatisch an das aktive Theme (hell/dunkel) an
 - Visueller Editor – keine YAML-Kenntnisse nötig
-- Klick öffnet den Detaildialog der Entität
+- Optional: Temperatur im Gaskasten und Füllstand in mm als Zusatzwerte
+- Klick öffnet den Detaildialog der jeweiligen Entität
 - Unterstützt das Sections-Dashboard (Grid-Layout)
 - Deutsch und Englisch
 
@@ -55,18 +56,27 @@ name: Gasgrill
 capacity: 11
 warning: 30
 critical: 15
+temperature_entity: sensor.gaskasten_temperatur
+level_mm_entity: sensor.gasflasche_fuellhoehe
 ```
 
-| Option     | Typ    | Standard                | Beschreibung                                         |
-| ---------- | ------ | ----------------------- | ---------------------------------------------------- |
-| `entity`   | string | **erforderlich**        | Entität, die den Füllstand in Prozent (0–100) liefert |
-| `name`     | string | Anzeigename der Entität | Überschrift der Card                                 |
-| `capacity` | number | `11`                    | Gesamtvolumen der Flasche in kg                      |
-| `warning`  | number | `30`                    | Ab diesem Füllstand (%) und darunter: gelb           |
-| `critical` | number | `15`                    | Ab diesem Füllstand (%) und darunter: rot            |
+| Option               | Typ    | Standard                | Beschreibung                                          |
+| -------------------- | ------ | ----------------------- | ----------------------------------------------------- |
+| `entity`             | string | **erforderlich**        | Entität, die den Füllstand in Prozent (0–100) liefert |
+| `name`               | string | Anzeigename der Entität | Überschrift der Card                                  |
+| `capacity`           | number | `11`                    | Gesamtvolumen der Flasche in kg                       |
+| `warning`            | number | `30`                    | Ab diesem Füllstand (%) und darunter: gelb            |
+| `critical`           | number | `15`                    | Ab diesem Füllstand (%) und darunter: rot             |
+| `temperature_entity` | string | –                       | Optional: Temperatur im Gaskasten                     |
+| `level_mm_entity`    | string | –                       | Optional: Füllstand der Gasflasche in mm              |
 
 Werte außerhalb von 0–100 % werden auf diesen Bereich begrenzt. Ist die Entität nicht
 verfügbar, zeigt die Card einen entsprechenden Hinweis an.
+
+Die optionalen Zusatzwerte erscheinen nur, wenn eine Entität eingetragen ist. Sie werden mit
+der Einheit und Nachkommastellen angezeigt, die in Home Assistant für die Entität eingestellt
+sind. Auf breiten Cards stehen sie rechts mit Beschriftung, auf schmalen Cards kompakt
+unter dem Füllstand.
 
 ### Farben anpassen
 
